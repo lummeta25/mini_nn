@@ -36,6 +36,6 @@ class Dense:
         self.bias = self.bias - learning_rate * dl_db
 
         return dl_di
-# dL/dweights = self.input.T @ dL
-# dL/dbias    = np.sum(dL)
-# dL/dinput   = dL @ self.weights.T
+    
+    def replace_weights(self, new_values):
+        self.weights, self.bias = new_values[0], new_values[1]

@@ -1,5 +1,6 @@
 from mini_nn.layers import Dense
 from mini_nn.loss import MSE
+import numpy as np
 import pickle
 
 class NeuralNetwork:
@@ -15,8 +16,8 @@ class NeuralNetwork:
         self.input = input
         return input
 
-    def print(self):
-        print(self.input)
+    # def print(self):
+    #     print(self.input)
 
     def backward(self, learning_rate, dL):
         layers = reversed(self.layers)
@@ -29,8 +30,11 @@ class NeuralNetwork:
         self.dL = dL
         return dL
     
-    def train(self, input, lables, epochs, learning_rate):
+    def train(self, input, lables, epochs, learning_rate, patience = 50):
         mse = MSE()
+        best_loss = float('inf')
+        best_wights = np.array([])
+        no_imporve = 0
         for epoch in range(epochs):
             lr = learning_rate * (1 / (1 + 0.001 * epoch))
             for sample in range(0, len(input)):
@@ -38,7 +42,24 @@ class NeuralNetwork:
                 loss = mse.forward(lables[sample], result)
                 grad = mse.backward()
                 self.backward(lr, grad)
-            print("Epoch: " + str(epoch) + " | loss: " + str(loss) + " | lr: " + str(lr))
+            
+            if best_loss > loss:
+                best_loss = loss
+                no_imporve = 0
+                best_wights = [(layer.weights.copy(), layer.bias.copy()) 
+                    for layer in self.layers 
+                    if isinstance(layer, Dense)]
+            else:
+                no_imporve += 1
+            if no_imporve == patience:
+                print("Early stopping beacause the model ran out of patience(no loss improvement for " + str(no_imporve) + " epochs).")
+                print("Weights and bais were restored to the best performing version.")
+                for layer in self.layers:
+                    if isinstance(layer, Dense):
+                        layer.replace_weights(best_wights[0])
+                        best_wights = best_wights[1:]
+                break
+            print("Epoch: " + str(epoch) + " | loss: " + str(loss) + " | lr: " + str(lr) + " | " + "no_imp: " + str(no_imporve))
 
     def save_model(self, file_name):
         model = {}
