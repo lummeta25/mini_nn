@@ -54,12 +54,17 @@ class NeuralNetwork:
             if no_imporve == patience:
                 print("Early stopping beacause the model ran out of patience(no loss improvement for " + str(no_imporve) + " epochs).")
                 print("Weights and bais were restored to the best performing version.")
-                for layer in self.layers:
-                    if isinstance(layer, Dense):
-                        layer.replace_weights(best_wights[0])
-                        best_wights = best_wights[1:]
+                self.update_weights(best_wights)
                 break
             print("Epoch: " + str(epoch) + " | loss: " + str(loss) + " | lr: " + str(lr) + " | " + "no_imp: " + str(no_imporve))
+        self.update_weights(best_wights)
+
+
+    def update_weights(self, weights):
+        for layer in self.layers:
+            if isinstance(layer, Dense):
+                layer.replace_weights(weights[0])
+                weights = weights[1:]
 
     def save_model(self, file_name):
         model = {}
