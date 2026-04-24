@@ -71,12 +71,12 @@ mini_nn/
 
 ## Roadmap
 
-- [ ] Early stopping
-- [ ] Model checkpointing (save best weights)
+- [X] Early stopping
+- [X] Model checkpointing (save best weights)
 - [ ] Mini-batch gradient descent
 - [ ] Multi-class output support (Softmax + Cross-entropy loss)
 - [ ] Additional loss functions
-- [ ] Docstrings and full documentation
+- [X] Docstrings and full documentation
 
 ## How It Works
 
